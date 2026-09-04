@@ -1,0 +1,541 @@
+/* ==========================================================================
+   Design tokens — mirrors the Figma variable collections (Color, Spacing,
+   Typography, Opacity) in z4r2GtcbVEovhkcWIFmdTf.
+   ========================================================================== */
+:root {
+  /* Primitive — warm neutrals */
+  --color-warm-100: #EAE7DC;
+  --color-warm-200: #C2BCA6;
+  --color-warm-300: #979283;
+  --color-warm-400: #6E6B61;
+  --color-warm-500: #474641;
+  --color-warm-600: #242424;
+
+  /* Primitive — true grays */
+  --color-white: #FFFFFF;
+  --color-gray-100: #F2F2F2;
+  --color-gray-200: #D9D9D9;
+  --color-gray-300: #B3B3B3;
+  --color-gray-400: #808080;
+  --color-gray-500: #4D4D4D;
+  --color-gray-600: #262626;
+  --color-black: #000000;
+
+  /* Semantic */
+  --color-bg-page: var(--color-warm-100);
+  --color-bg-footer: rgb(from var(--color-gray-200) r g b / var(--opacity-4));
+  --color-text-primary: var(--color-warm-600);
+  --color-text-secondary: var(--color-warm-500);
+  --color-border-subtle: var(--color-warm-200);
+  --color-border-sharp: var(--color-gray-600);
+
+  /* Typography */
+  --font-family-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-family-body: "Fragment Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --font-size-body: 14px;      --line-height-body: 20px;
+  --font-size-subhead: 22px;   --line-height-subhead: 28px;
+  --font-size-h1: 30px;        --line-height-h1: 36px;
+  --font-size-h2: 38px;        --line-height-h2: 44px;
+  --font-size-display-sm: 46px; --line-height-display-sm: 52px;
+  --font-size-display: 54px;   --line-height-display: 60px;
+
+  /* Spacing */
+  --space-1: 8px;  --space-2: 16px; --space-3: 24px; --space-4: 32px; --space-5: 40px;
+  --space-6: 48px; --space-7: 56px; --space-8: 64px; --space-9: 72px; --space-10: 80px;
+
+  /* Sizing */
+  --size-icon: 16px;
+  --size-row-height: 32px;
+  --size-nav-height: 80px;
+  --size-page-max-width: 1280px;
+
+  /* Breakpoints (reference — expressed as media queries below) */
+  --breakpoint-tablet: 1024px;
+  --breakpoint-mobile: 768px;
+
+  /* Borders */
+  --border-width-1: 1px;
+  --border-width-2: 8px;
+
+  /* Opacity */
+  --opacity-1: 0.11; --opacity-2: 0.22; --opacity-3: 0.33;
+  --opacity-4: 0.44; --opacity-5: 0.55; --opacity-6: 0.66;
+
+  /* Layout */
+  --page-margin: 40px;
+  --grid-gap: 20px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-margin: var(--space-3);
+    --grid-gap: var(--space-3);
+  }
+}
+
+/* ==========================================================================
+   Dark mode — mirrors the "Dark" mode on Figma's Color variable collection.
+   Only semantic tokens change; primitives are mode-independent by design.
+   System preference applies unless explicitly overridden via [data-theme].
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg-page: var(--color-warm-600);
+    --color-bg-footer: var(--color-black);
+    --color-text-primary: var(--color-warm-100);
+    --color-border-subtle: var(--color-black);
+    --color-border-sharp: var(--color-gray-100);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg-page: var(--color-warm-600);
+  --color-bg-footer: var(--color-black);
+  --color-text-primary: var(--color-warm-100);
+  --color-border-subtle: var(--color-black);
+  --color-border-sharp: var(--color-gray-100);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+a { color: inherit; }
+
+.page {
+  width: 100%;
+  padding-top: var(--size-nav-height);
+}
+
+.section {
+  padding: 0 var(--page-margin);
+}
+
+/* ==========================================================================
+   Navbar
+   ========================================================================== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--size-nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--page-margin);
+}
+
+.navbar__logo {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+.navbar__menu {
+  width: var(--size-icon);
+  height: var(--size-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+.navbar__menu svg { width: 100%; height: 100%; }
+
+/* Placeholder light/dark toggle — a single icon swaps depending on mode,
+   no track/thumb. Asleep (moon) shows in light mode, awake (sun) shows in
+   dark mode — each icon signals the mode you're in, not the mode you'd
+   switch to. */
+.theme-toggle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--color-text-primary);
+}
+.theme-toggle__icon {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+.theme-toggle__icon svg { width: 100%; height: 100%; display: block; }
+.theme-toggle__icon--asleep { display: flex; }
+:root[data-theme="dark"] .theme-toggle__icon--asleep { display: none; }
+:root[data-theme="dark"] .theme-toggle__icon--awake { display: flex; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle__icon--asleep { display: none; }
+  :root:not([data-theme="light"]) .theme-toggle__icon--awake { display: flex; }
+}
+
+/* ==========================================================================
+   Section headings ("Services", "Projects")
+   ========================================================================== */
+.section-heading {
+  text-align: center;
+  padding: var(--space-3) var(--page-margin);
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-weight: 500;
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-h1);
+}
+
+/* Case study project name — same centered, full-width treatment as
+   .section-heading above, at the larger hero display size. */
+.project-title {
+  text-align: center;
+  padding: 0 var(--page-margin) var(--space-3);
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-weight: 500;
+  font-size: var(--font-size-display-sm);
+  line-height: var(--line-height-display-sm);
+}
+
+/* ==========================================================================
+   Label + content row (Outcome / About) — 12-col fluid grid
+   ========================================================================== */
+.row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
+  padding: var(--space-5) var(--page-margin);
+}
+
+.row__label {
+  grid-column: 5 / span 2;
+}
+
+.row__content {
+  grid-column: 7 / span 6;
+  max-width: 480px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: var(--space-4) var(--page-margin);
+  }
+  .row__label {
+    grid-column: 1 / span 2;
+  }
+  .row__content {
+    grid-column: 3 / span 4;
+    max-width: none;
+  }
+}
+
+/* ==========================================================================
+   Accordion list (Services items, Ongoing projects)
+   ========================================================================== */
+.accordion-block {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
+  padding: var(--space-4) var(--page-margin);
+}
+.accordion-block[hidden] {
+  display: none;
+}
+
+.accordion-block + .accordion-block {
+  padding-top: 0;
+}
+
+.accordion-block__list {
+  grid-column: 7 / span 5;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .accordion-block {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: var(--space-3) var(--page-margin);
+  }
+  .accordion-block__list {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+.accordion-row {
+  display: block;
+  border-bottom: var(--border-width-1) solid transparent;
+  color: inherit;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  text-decoration: none;
+}
+
+/* Desktop/tablet: divider line only appears on hover */
+@media (min-width: 769px) {
+  .accordion-row:hover {
+    border-bottom-color: var(--color-border-sharp);
+  }
+}
+
+/* Mobile: divider line always visible */
+@media (max-width: 768px) {
+  .accordion-row {
+    border-bottom-color: var(--color-border-sharp);
+  }
+}
+
+.accordion-row__summary {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  list-style: none;
+}
+.accordion-row__summary::-webkit-details-marker { display: none; }
+
+.accordion-block__label {
+  grid-column: 5 / span 2;
+  align-self: start;
+  padding-top: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .accordion-block__label {
+    display: block;
+    grid-column: 1 / -1;
+    padding-top: 0;
+    margin-bottom: var(--space-2);
+  }
+}
+
+.accordion-row__tag {
+  flex: 0 0 90px;
+}
+
+.accordion-row__label {
+  flex: 1 1 auto;
+  padding-right: var(--space-2);
+}
+
+.accordion-row__chevron {
+  flex: 0 0 var(--size-icon);
+  width: var(--size-icon);
+  height: var(--size-icon);
+  transition: transform 0.2s ease;
+}
+
+details.accordion-row[open] .accordion-row__chevron {
+  transform: rotate(180deg);
+}
+
+.accordion-row__panel {
+  grid-column: 1 / -1;
+  padding: 0 0 var(--space-3) 0;
+  color: var(--color-warm-500);
+  max-width: 460px;
+}
+
+.project-row .accordion-row__label {
+  flex: 0 1 180px;
+  min-width: 0;
+  padding-right: var(--space-2);
+}
+.project-row .accordion-row__tag {
+  flex: 0 0 90px;
+}
+.project-row .accordion-row__chevron {
+  margin-left: auto;
+}
+
+@media (max-width: 480px) {
+  .project-row .accordion-row__label {
+    flex: 0 1 auto;
+  }
+}
+
+/* ==========================================================================
+   Divider
+   ========================================================================== */
+.divider {
+  border: none;
+  border-top: var(--border-width-1) solid var(--color-border-subtle);
+  opacity: var(--opacity-3);
+  margin: var(--space-5) var(--page-margin);
+}
+
+@media (max-width: 768px) {
+  .divider { display: none; }
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.footer {
+  background: var(--color-bg-footer);
+  width: 100%;
+}
+
+.footer__inner {
+  padding: var(--space-3) var(--page-margin);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gap);
+}
+
+.footer__address {
+  grid-column: 1 / span 4;
+  white-space: pre-line;
+  font-style: normal;
+}
+
+.footer__contact {
+  grid-column: 7 / span 4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.footer__contact a { text-decoration: underline; }
+
+.footer__copyright {
+  grid-column: 11 / span 2;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .footer__inner {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .footer__address { grid-column: 1 / -1; margin-bottom: var(--space-6); }
+  .footer__contact { grid-column: 1 / -1; margin-top: var(--space-3); }
+  .footer__copyright {
+    grid-column: 1 / -1;
+    text-align: left;
+    margin-top: var(--space-1);
+  }
+}
+
+/* ==========================================================================
+   Figure (case study imagery)
+   ========================================================================== */
+.figure { grid-column: 7 / span 6; margin: 0; }
+.figure--wide { grid-column: 1 / span 12; }
+.figure--sixcol { grid-column: 1 / span 6; }
+.figure--half { grid-column: 7 / span 3; }
+.figure__frame {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--color-bg-footer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-warm-400);
+  font-size: var(--font-size-body);
+}
+.figure--wide .figure__frame { aspect-ratio: 16 / 9; height: auto; }
+.figure__frame img, .figure__frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.figure__caption { padding-top: var(--space-1); color: var(--color-text-secondary); }
+
+@media (max-width: 768px) {
+  .figure, .figure--wide, .figure--sixcol, .figure--half { grid-column: 1 / -1; width: 100%; }
+}
+
+/* Reusable one-off column positions (case study spreads/pairs) — desktop
+   values only; each collapses to full-width on mobile alongside quote-block,
+   below. Keeping these in classes rather than inline styles is what lets the
+   mobile media query win: inline styles cannot be overridden by a stylesheet
+   rule without !important. */
+.pos-2-4  { grid-column: 2 / span 4; }
+.pos-7-6  { grid-column: 7 / span 6; }
+.pos-8-4  { grid-column: 8 / span 4; }
+.pos-10-3 { grid-column: 10 / span 3; }
+
+/* ==========================================================================
+   Quote block (case study pull-quote)
+   ========================================================================== */
+.quote-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-4);
+}
+.quote-block__text {
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-weight: 500;
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-h1);
+  color: var(--color-text-primary);
+}
+.quote-block__attribution {
+  margin: 0;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 768px) {
+  .quote-block,
+  .pos-7-6, .pos-10-3 {
+    grid-column: 1 / -1;
+    margin-top: var(--space-4);
+  }
+  /* The desktop 4-col images keep their 4-col width on mobile (out of the
+     6-col grid) instead of stretching full-width like everything else —
+     text blocks sharing these position classes (e.g. quote-block) are
+     excluded via the .figure qualifier above. */
+  .figure.pos-2-4, .figure.pos-8-4 {
+    grid-column: 2 / span 4;
+    margin-top: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   Animation grid (3x3 asynchronous frame-cycling wall)
+   ========================================================================== */
+.anim-grid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0;
+}
+.anim-cell {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
