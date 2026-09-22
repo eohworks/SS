@@ -508,6 +508,60 @@ details.accordion-row[open] .accordion-row__chevron {
   color: var(--color-text-primary);
 }
 
+/* Type scale (case study specimen list) — one real vector specimen, shown
+   at 7 widths matching the (x4…x.5) multipliers in its own captions. */
+.type-scale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-self: center;
+  background: var(--color-bg-footer);
+  padding: var(--space-4);
+  /* Specimens use Figma's exact pixel sizes, so the larger ones are wider
+     than this column — clip them at this box's own edge, which already
+     sits at the page margin (col 12 of the grid ends exactly there). */
+  overflow: hidden;
+}
+.type-scale-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.type-scale-row__caption {
+  margin: 0;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  /* Flat gray-400 in both modes — gray-500 matched dark mode's contrast
+     ratio numerically but read as too strong in light mode by eye. */
+  color: var(--color-gray-400);
+}
+/* Each row is an infinite ticker: the track holds two back-to-back copies
+   of the specimen (each carrying its own trailing gap as margin, so the
+   two copies are identical-width units) and scrolls exactly one unit's
+   width — a seamless loop with no jump. Speed is the same px/sec for every
+   row (duration is set per row, inline, from the specimen's own width), so
+   a 48pt line and a 6pt line feel like the same motion, not the same time. */
+.type-scale-row__ticker {
+  width: 100%;
+  overflow: hidden;
+}
+.type-scale-row__track {
+  display: flex;
+  width: max-content;
+  animation-name: type-scale-ticker;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.type-scale-row__specimen { color: var(--color-text-primary); flex: none; }
+@keyframes type-scale-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .type-scale-row__track { animation-play-state: paused; }
+}
+
 @media (max-width: 768px) {
   .quote-block,
   .pos-7-6, .pos-10-3, .pos-2-10 {
