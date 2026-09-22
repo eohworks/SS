@@ -1,12 +1,14 @@
 /* Label Reveal — sequences the animated label SVG (see .label-reveal in styles.css).
-   Grid lines: the direction with many lines staggers one tick apart while the few
-   crossing lines sweep once across. Text rows follow two ticks apart, starting with
-   the grid; each label's flag is its last piece. Plays when scrolled into view, holds on
-   the finished artwork, cuts back to blank and loops while it stays in view. */
+   Grid lines: the direction with many lines builds from the middle line outward to
+   both sides symmetrically, one tick per step, while the few crossing lines sweep
+   once across, timed to finish together with them. Text rows follow two ticks apart,
+   starting with the grid; each label's flag is its last piece. Plays when scrolled
+   into view, holds on the finished artwork, cuts back to blank and loops while it
+   stays in view. */
 (function () {
   var TEXT_START = 0;      // ticks
   var ROW_STAGGER = 2;     // ticks between rows
-  var HOLD_TICKS = 40;     // rest on the finished artwork before the loop restarts (40 x 80ms = 3.2s)
+  var HOLD_TICKS = 25;     // rest on the finished artwork before the loop restarts (25 x 80ms = 2s)
 
   var num = function (el, a) { return parseFloat(el.getAttribute(a) || 0); };
   var delay = function (el, ticks) { el.style.animationDelay = 'calc(var(--tick) * ' + ticks + ')'; };
@@ -36,10 +38,14 @@
         .sort(function (a, b) { return num(a, 'x1') - num(b, 'x1'); });
       var stag = H.length > V.length ? H : V;
       var sweep = H.length > V.length ? V : H;
-      stag.forEach(function (l, i) { l.classList.add('stag'); delay(l, i); });
+      // Build from the middle line outward: the one or two lines nearest the
+      // centre go first, matching pairs on either side follow at the same tick.
+      var mid = (stag.length - 1) / 2;
+      var maxTicks = Math.floor(mid);
+      stag.forEach(function (l, i) { l.classList.add('stag'); delay(l, Math.floor(Math.abs(i - mid))); });
       sweep.forEach(function (l) {
         l.classList.add('sweep');
-        l.style.animationDuration = 'calc(var(--tick) * ' + stag.length + ')';
+        l.style.animationDuration = 'calc(var(--tick) * ' + (maxTicks + 1) + ')';
       });
     });
 
